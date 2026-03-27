@@ -1,0 +1,67 @@
+/* Cart page layout - items on left, summary on right */
+.cart-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* On small screens - stack vertically */
+@media (max-width: 768px) {
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Cart Items List (left side) */
+.cart-items-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Order Summary Box (right side) */
+.order-summary {
+  padding: 20px;
+  position: sticky;
+  top: 80px; /* Navbar ke neeche stay kare */
+}
+
+.summary-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1f2937;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 10px;
+}
+
+.free-tag {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.summary-divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 12px 0;
+}
+
+.total-row {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.place-order-btn {
+  width: 100%;
+  padding: 13px;
+  font-size: 15px;
+  margin-top: 16px;
+}
