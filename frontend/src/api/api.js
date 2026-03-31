@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Backend ka base URL - Spring Boot port 8080 pe chal raha hai
-const BASE_URL = "http://localhost:8080/api";
+const BASE_URL = "https://shopeasy-ecommerce-app-backend.onrender.com";
 
 // Axios instance banao with base URL
 const api = axios.create({
