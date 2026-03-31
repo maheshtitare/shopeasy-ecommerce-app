@@ -1,9 +1,9 @@
 import axios from "axios";
 
-// Backend ka base URL - Spring Boot port 8080 pe chal raha hai
-const BASE_URL = "https://shopeasy-ecommerce-app-backend.onrender.com";
+// ✅ FIX: /api add kiya
+const BASE_URL = "https://shopeasy-ecommerce-app-backend.onrender.com/api";
 
-// Axios instance banao with base URL
+// Axios instance
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -12,7 +12,6 @@ const api = axios.create({
 });
 
 // ===== Request Interceptor =====
-// Har request ke saath automatically JWT token attach karo
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -22,7 +21,6 @@ api.interceptors.request.use((config) => {
 });
 
 // ===== Response Interceptor =====
-// 401 Unauthorized aaye (token expire/invalid) to localStorage clear karo aur login pe bhejo
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -53,7 +51,7 @@ export const removeFromCart = (cartItemId)     => api.delete(`/cart/${cartItemId
 // ===== ORDER APIs =====
 export const placeOrder        = ()              => api.post("/orders/place");
 export const getMyOrders       = ()              => api.get("/orders/my");
-export const getAllOrders       = ()              => api.get("/orders/all");
+export const getAllOrders      = ()              => api.get("/orders/all");
 export const updateOrderStatus = (id, status)    => api.put(`/orders/${id}/status`, { status });
 
 export default api;
