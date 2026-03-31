@@ -18,11 +18,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-// ===== Spring Security Configuration =====
-// Yahan decide hota hai kaun sa endpoint open hai, kaun sa protected
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity   // @PreAuthorize annotation use karne ke liye (Admin endpoints pe)
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -32,48 +30,56 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            // REST API me CSRF nahi chahiye (cookies use nahi hote)
-            .csrf(csrf -> csrf.disable())
-
-            // CORS enable karo - React frontend (port 3000) se requests allow karne ke liye
+            // ✅ CORS ENABLE (IMPORTANT)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-            // Session stateless - hum JWT use kar rahe hain, server-side session nahi
+            // ❌ CSRF disable (JWT use ho raha hai)
+            .csrf(csrf -> csrf.disable())
+
+            // ❌ Stateless session (JWT)
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            // Endpoints ki permissions define karo
+            // ✅ Endpoint rules
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()               // Register + Login - sabke liye open
-                .requestMatchers("/api/products", "/api/products/**").permitAll() // Products dekhna - sabke liye
-                .anyRequest().authenticated()                              // Baaki sab ke liye JWT token zaroori
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/products", "/api/products/**").permitAll()
+                .anyRequest().authenticated()
             )
 
-            // JWT filter ko default filter ke pehle add karo
+            // ✅ JWT filter
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // BCrypt password encoder bean
-    // Password securely hash karta hai - plain text kabhi store nahi hoti
+    // 🔐 Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // CORS Configuration
-    // React frontend localhost:3000 se backend localhost:8080 pe requests allow karo
+    // 🌐 FINAL CORS CONFIG (IMPORTANT 🔥)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        config.setAllowedOrigins(List.of(
+                "http://localhost:3000",
+                "https://shopeasy-ecommerce-app.vercel.app"
+        ));
+
+        config.setAllowedMethods(List.of(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS"
+        ));
+
         config.setAllowedHeaders(List.of("*"));
+
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
 }
