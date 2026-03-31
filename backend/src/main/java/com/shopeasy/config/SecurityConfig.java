@@ -30,13 +30,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            // ✅ CORS ENABLE (IMPORTANT)
+            // ✅ CORS ENABLE
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
             // ❌ CSRF disable (JWT use ho raha hai)
             .csrf(csrf -> csrf.disable())
 
-            // ❌ Stateless session (JWT)
+            // ❌ Stateless session
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
@@ -59,15 +59,13 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // 🌐 FINAL CORS CONFIG (IMPORTANT 🔥)
+    // 🌐 FINAL CORS CONFIG (FIXED 🔥)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of(
-                "http://localhost:3000",
-                "https://shopeasy-ecommerce-app.vercel.app"
-        ));
+        // 🔥 IMPORTANT FIX (dynamic domains support)
+        config.setAllowedOriginPatterns(List.of("*"));
 
         config.setAllowedMethods(List.of(
                 "GET", "POST", "PUT", "DELETE", "OPTIONS"
